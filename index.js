@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { renameSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync, renameSync } from 'fs';
 
 console.log('Welcome to File Renamer!\nPlease:');
 
