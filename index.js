@@ -7,18 +7,18 @@ const questions = [
     {
         type: 'input',
         name: 'path',
-        message: 'Provide path to files folder:',
+        message: 'Provide path to folder with files:',
     },
     {
         type: 'input',
         name: 'name',
-        message: 'Specify the name of folder:',
+        message: 'Specify the folder name:',
     },
     {
         type: 'list',
         name: 'extension',
         message: 'Select the appropriate file extension:',
-        choices: ['.jpg', '.mp4'],
+        choices: ['.jpg', '.png', '.mp4'],
     },
 ];
 
