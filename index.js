@@ -20,7 +20,8 @@ switch (CURRENT_OS) {
         systemSeparator = '/';
         break;
     default:
-        throw 'Your OS is currently not supported.';
+        console.error('Your OS is currently not supported.');
+        process.exit(1);
 }
 
 console.log('Welcome to File Renamer!\nPlease:');
@@ -29,42 +30,36 @@ const questions = [
     {
         type: 'input',
         name: 'path',
-        message: 'Provide path to folder with files:',
-    },
-    {
-        type: 'input',
-        name: 'name',
-        message: 'Specify the folder name:',
-    },
-    {
-        type: 'list',
-        name: 'extension',
-        message: 'Select the appropriate file extension:',
-        choices: ['.jpg', '.png', '.mp4'],
+        message: 'Provide path to files:',
     },
 ];
 
 inquirer
     .prompt(questions)
     .then((answers) => {
-        let pathToFiles = `${answers.path}${systemSeparator}${answers.name}`;
-        let files = readdirSync(pathToFiles).filter(isNotJunk);
+        console.log('Preparing...');
+
+        const PATH_TO_FILES = answers.path;
+        const FOLDER_NAME = PATH_TO_FILES.slice(PATH_TO_FILES.lastIndexOf(systemSeparator) + 1);
+
+        let files = readdirSync(PATH_TO_FILES).filter(isNotJunk);
         let sortedFiles = files.sort((a, b) => {
-            let c = statSync(`${pathToFiles}${systemSeparator}${a}`).mtime;
-            let d = statSync(`${pathToFiles}${systemSeparator}${b}`).mtime;
+            let c = statSync(`${PATH_TO_FILES}${systemSeparator}${a}`).mtime;
+            let d = statSync(`${PATH_TO_FILES}${systemSeparator}${b}`).mtime;
             return c - d;
         });
 
         console.log('Start renaming...');
 
-        sortedFiles.forEach((file, index) => {
-            let oldFilePath = `${pathToFiles}${systemSeparator}${file}`;
-            let newFile = `${answers.name} (${++index})${answers.extension}`;
-            let newFilePath = `${pathToFiles}${systemSeparator}${newFile}`;
+        sortedFiles.forEach((oldFileName, index) => {
+            let oldFilePath = `${PATH_TO_FILES}${systemSeparator}${oldFileName}`;
+            let fileExtension = oldFileName.slice(oldFileName.lastIndexOf('.'));
+            let newFileName = `${FOLDER_NAME} (${++index})${fileExtension}`;
+            let newFilePath = `${PATH_TO_FILES}${systemSeparator}${newFileName}`;
 
             renameSync(oldFilePath, newFilePath, (err) => console.log(err));
 
-            console.log(`${file}  ->  ${newFile}`);
+            console.log(`${oldFileName}  ->  ${newFileName}`);
         });
     })
     .then(
